@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Caminho do template e do arquivo final
+TEMPLATE="/etc/duckdns.conf.template"
+CONFIG_FILE="/etc/duckdns.conf"
+
+# Função para solicitar a configuração do usuário
+request_config() {
+    echo "Por favor, forneça os valores para as configurações do DuckDNS."
+
+    # Solicitar DOMAINS e TOKEN se não estiverem definidos
+    if [ -z "$DUCKDNS_DOMAINS" ]; then
+        read -p "Digite seu(s) domínio(s) DuckDNS (separados por vírgula): " DUCKDNS_DOMAINS
+	export DUCKDNS_DOMAINS
+    fi
+
+    if [ -z "$DUCKDNS_TOKEN" ]; then
+        read -p "Digite seu token DuckDNS: " DUCKDNS_TOKEN
+	export DUCKDNS_TOKEN
+    fi
+}
+
+# Codificar o TOKEN em Base64, caso não esteja em Base64
+encode_token_base64() {
+    if [[ ! "$DUCKDNS_TOKEN" =~ ^[A-Za-z0-9+/=]+$ ]]; then
+        DUCKDNS_TOKEN=$(echo -n "$DUCKDNS_TOKEN" | base64)
+    fi
+}
+
+# Verificar se as variáveis de ambiente estão definidas
+if [ -z "$DUCKDNS_DOMAINS" ] || [ -z "$DUCKDNS_TOKEN" ]; then
+    request_config
+fi
+
+# Codificar o TOKEN se necessário
+encode_token_base64
+
+# Garantir que o arquivo de configuração final seja criado
+echo "Gerando o arquivo de configuração em $CONFIG_FILE..."
+
+# Substituir as variáveis do template com envsubst
+envsubst < "$TEMPLATE" > "$CONFIG_FILE"
+
+# Verificar se a criação do arquivo foi bem-sucedida
+if [ $? -eq 0 ]; then
+    echo "Configuração concluída com sucesso!"
+else
+    echo "Erro ao gerar o arquivo de configuração."
+    exit 1
+fi

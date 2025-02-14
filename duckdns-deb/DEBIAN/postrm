@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+# Desativa o serviço e remove arquivos extras
+systemctl stop duckdns.timer
+systemctl disable duckdns.timer
+systemctl daemon-reexec

@@ -1,0 +1,8 @@
+Package: duckdns
+Version: 1.0-1
+Architecture: all
+Maintainer: Erick Davi Morgade Pessanha <erickdavi@gmail.com>
+Description: Serviço para atualização dinâmica de IP no DuckDNS
+Depends: curl, systemd
+Priority: optional
+Section: net

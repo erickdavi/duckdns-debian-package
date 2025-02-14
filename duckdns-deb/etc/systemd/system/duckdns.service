@@ -1,0 +1,8 @@
+[Unit]
+Description=Atualização do DuckDNS
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/sbin/duckdns.sh
+EnvironmentFile=/etc/duckdns.conf
